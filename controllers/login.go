@@ -41,6 +41,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	// create a new JWT token and the method sign will be HS256
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": user.ID,
 		"iat": time.Now().Unix(),
