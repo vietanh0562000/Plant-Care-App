@@ -22,6 +22,7 @@ func main() {
 	router.POST("/create_plant", middlewares.AuthMiddleware(), controllers.CreatePlant)
 	router.GET("/plants", controllers.GetPlants)
 	router.GET("/users/:id", controllers.GetUser)
+	router.POST("/plants/:id/schedules", middlewares.AuthMiddleware(), controllers.CreatePlantSchedule)
 
 	router.Run(":8080")
 }
