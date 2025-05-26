@@ -11,5 +11,5 @@ type User struct {
 	Password  string    `gorm:"not null"`
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
-	Plants    []Plant   `gorm:"foreignKey:ID"`
+	Plants    []Plant   `gorm:"foreignKey:UserID"`
 }
