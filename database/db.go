@@ -19,7 +19,7 @@ func Connect() {
 		log.Fatal(err)
 	}
 
-	err = db.AutoMigrate(&models.User{}, &models.Plant{}, &models.Schedule{})
+	err = db.AutoMigrate(&models.User{}, &models.Plant{}, &models.Schedule{}, &models.Species{})
 	if err != nil {
 		log.Fatal(err)
 	}

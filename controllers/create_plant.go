@@ -13,6 +13,7 @@ type PlantInput struct {
 	Name             string `json:"Name" binding:"required"`
 	ImageURL         string `json:"ImageUrl" binding:"required"`
 	WateringInterval int    `json:"WateringInterval" binding:"required"`
+	SpeciesID        int    `json:"SpeciesID" binding:"required"`
 }
 
 func CreatePlant(c *gin.Context) {
@@ -46,11 +47,20 @@ func CreatePlant(c *gin.Context) {
 
 	fmt.Printf("Found user: ID=%d, Name=%s\n", user.ID, user.Name)
 
+	// Verify that the species exists
+	var species models.Species
+	if err := database.DB.First(&species, plantInput.SpeciesID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Species not found"})
+		return
+	}
+
+	// Create the plant with the existing species ID
 	newPlant := models.Plant{
 		Name:             plantInput.Name,
 		ImageURL:         plantInput.ImageURL,
 		WateringInterval: plantInput.WateringInterval,
 		UserID:           user.ID,
+		SpeciesID:        plantInput.SpeciesID,
 	}
 
 	result = database.DB.Create(&newPlant)
