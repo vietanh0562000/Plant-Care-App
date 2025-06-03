@@ -17,7 +17,7 @@ func SetupRoutes(r *gin.Engine) {
 	authorized.Use(middlewares.AuthMiddleware())
 	{
 		// User routes
-		authorized.GET("/users/:id", controllers.GetUser)
+		//authorized.GET("/users/:id", controllers.GetUser)
 
 		// Plant routes
 		authorized.POST("/plants", controllers.CreatePlant)
@@ -27,8 +27,8 @@ func SetupRoutes(r *gin.Engine) {
 		authorized.GET("/species", controllers.GetSpecies)
 
 		// Admin routes
-		admin := authorized.Group("/")
-		admin.Use(middlewares.RequireRole("admin"))
+		admin := authorized.Group("/admin")
+		admin.Use(middlewares.RequireAdmin())
 		{
 			// Species management (admin only)
 			admin.POST("/species", controllers.CreateSpeciesAdmin)

@@ -3,24 +3,62 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"plant-care-app/database"
 	"plant-care-app/models"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PlantInput struct {
-	Name             string `json:"Name" binding:"required"`
-	ImageURL         string `json:"ImageUrl" binding:"required"`
-	WateringInterval int    `json:"WateringInterval" binding:"required"`
-	SpeciesID        int    `json:"SpeciesID" binding:"required"`
+	Name             string `form:"Name" binding:"required"`
+	WateringInterval string `form:"WateringInterval" binding:"required"`
+	SpeciesID        string `form:"SpeciesID" binding:"required"`
 }
 
 func CreatePlant(c *gin.Context) {
 	var plantInput PlantInput
 
-	if err := c.ShouldBindJSON(&plantInput); err != nil {
+	// Debug: Print all form data
+	form, err := c.MultipartForm()
+	if err != nil {
+		fmt.Printf("Error getting multipart form: %v\n", err)
+	} else {
+		fmt.Printf("Form data: %+v\n", form.Value)
+	}
+
+	if err := c.ShouldBind(&plantInput); err != nil {
+		fmt.Printf("Binding error: %v\n", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Debug: Print the bound input
+	fmt.Printf("Bound input: %+v\n", plantInput)
+
+	// read image from request
+	file, err := c.FormFile("Image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Image file is not found " + err.Error()})
+		return
+	}
+
+	// get container folder
+	uploadDir := os.Getenv("UPLOAD_PLANT_DIR")
+	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error create upload directory " + err.Error()})
+		return
+	}
+
+	// Generate file name
+	filename := fmt.Sprintf("%d_%s", time.Now().Unix(), filepath.Base(file.Filename))
+	fullPath := filepath.Join(uploadDir, filename)
+
+	if err := c.SaveUploadedFile(file, fullPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file " + err.Error()})
 		return
 	}
 
@@ -45,22 +83,33 @@ func CreatePlant(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("Found user: ID=%d, Name=%s\n", user.ID, user.Name)
+	// Convert string inputs to required types
+	wateringInterval, err := strconv.Atoi(plantInput.WateringInterval)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid watering interval"})
+		return
+	}
+
+	speciesID, err := strconv.Atoi(plantInput.SpeciesID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid species ID"})
+		return
+	}
 
 	// Verify that the species exists
 	var species models.Species
-	if err := database.DB.First(&species, plantInput.SpeciesID).Error; err != nil {
+	if err := database.DB.First(&species, speciesID).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Species not found"})
 		return
 	}
 
-	// Create the plant with the existing species ID
+	// Create the plant
 	newPlant := models.Plant{
 		Name:             plantInput.Name,
-		ImageURL:         plantInput.ImageURL,
-		WateringInterval: plantInput.WateringInterval,
+		ImagePath:        fullPath,
+		WateringInterval: wateringInterval,
 		UserID:           user.ID,
-		SpeciesID:        plantInput.SpeciesID,
+		SpeciesID:        speciesID,
 	}
 
 	result = database.DB.Create(&newPlant)

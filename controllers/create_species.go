@@ -9,33 +9,28 @@ import (
 )
 
 type SpeciesInput struct {
-	Name  string `gorm:"primaryKey"`
+	Name  string `json:"name" binding:"required"`
 	Notes string
 }
 
 func CreateSpecies(c *gin.Context) {
-	userID, exist := c.Get("userID")
-	if !exist {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User not exist"})
-		return
-	}
-
-	var user models.User
-	err := database.DB.First(&user).Where("id = ?", userID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error})
-		return
-	}
-
-	if user.Role != "Admin" {
-		c.JSON(http.StatusNonAuthoritativeInfo, gin.H{"error": "Not enough authorization"})
-		return
-	}
-
 	var speciesInput SpeciesInput
 
 	if err := c.ShouldBindJSON(&speciesInput); err != nil {
-		c.JSON(http.StatusBadRequest, g.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	// Create new species
+	species := models.Species{
+		Name:  speciesInput.Name,
+		Notes: speciesInput.Notes,
+	}
+
+	if err := database.DB.Create(&species).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, species)
 }

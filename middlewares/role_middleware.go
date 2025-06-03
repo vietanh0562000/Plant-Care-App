@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RequireRole(roles ...string) gin.HandlerFunc {
+func RequireAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, exists := c.Get("userID")
 		if !exists {
@@ -25,11 +25,9 @@ func RequireRole(roles ...string) gin.HandlerFunc {
 		}
 
 		// Check if user's role is in the allowed roles
-		for _, role := range roles {
-			if user.Role == role {
-				c.Next()
-				return
-			}
+		if user.IsAdmin {
+			c.Next()
+			return
 		}
 
 		c.JSON(http.StatusForbidden, gin.H{"error": "Insufficient permissions"})
