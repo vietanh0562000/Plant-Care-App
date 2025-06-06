@@ -22,6 +22,7 @@ func SetupRoutes(r *gin.Engine) {
 		// Plant routes
 		authorized.POST("/plants", controllers.CreatePlant)
 		authorized.GET("/plants", controllers.GetPlants)
+		authorized.GET("/plants/need-watering", controllers.GetPlantsNeedWatering)
 
 		// Species routes (read-only for regular users)
 		authorized.GET("/species", controllers.GetSpecies)
