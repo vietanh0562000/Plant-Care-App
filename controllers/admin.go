@@ -46,7 +46,7 @@ func CreateFirstAdmin() {
 	}
 
 	if err := database.DB.Create(&newAdmin).Error; err != nil {
-		log.Printf("Error creating admin: &v", err.Error())
+		log.Printf("Error creating admin: %v", err)
 		return
 	}
 
