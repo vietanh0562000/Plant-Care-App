@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"net/http"
-	"plant-care-app/database"
-	"plant-care-app/models"
+	"plant-care-app/user-service/internal/database"
+	"plant-care-app/user-service/internal/models"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,12 +1,12 @@
-package controllers
+package handlers
 
 import (
 	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
-	"plant-care-app/database"
-	"plant-care-app/models"
+	"plant-care-app/plants-service/internal/database"
+	"plant-care-app/plants-service/internal/models"
 	"strconv"
 	"time"
 
@@ -62,27 +62,6 @@ func CreatePlant(c *gin.Context) {
 		return
 	}
 
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
-		return
-	}
-
-	// Convert userID to int
-	uid, ok := userID.(float64)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
-		return
-	}
-
-	var user models.User
-	result := database.DB.First(&user, int(uid))
-	if result.Error != nil {
-		fmt.Printf("Error finding user with ID %v: %v\n", uid, result.Error)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
-		return
-	}
-
 	// Convert string inputs to required types
 	wateringInterval, err := strconv.Atoi(plantInput.WateringInterval)
 	if err != nil {
@@ -108,11 +87,10 @@ func CreatePlant(c *gin.Context) {
 		Name:             plantInput.Name,
 		ImagePath:        fullPath,
 		WateringInterval: wateringInterval,
-		UserID:           user.ID,
 		SpeciesID:        speciesID,
 	}
 
-	result = database.DB.Create(&newPlant)
+	result := database.DB.Create(&newPlant)
 	if result.Error != nil {
 		fmt.Printf("Error creating plant: %v\n", result.Error)
 		c.JSON(http.StatusInternalServerError, gin.H{

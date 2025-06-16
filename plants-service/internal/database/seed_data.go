@@ -1,8 +1,7 @@
-package controllers
+package database
 
 import (
-	"plant-care-app/database"
-	"plant-care-app/models"
+	"plant-care-app/plants-service/internal/models"
 	"time"
 )
 
@@ -17,17 +16,8 @@ func SeedData() {
 	}
 
 	for _, s := range species {
-		database.DB.FirstOrCreate(&s, models.Species{Name: s.Name})
+		DB.FirstOrCreate(&s, models.Species{Name: s.Name})
 	}
-
-	// Create a test user if not exists
-	user := models.User{
-		Name:     "Test User",
-		Email:    "test@example.com",
-		Password: "password123", // In real app, this should be hashed
-		IsAdmin:  true,
-	}
-	database.DB.FirstOrCreate(&user, models.User{Email: user.Email})
 
 	// Create plants with different watering schedules
 	now := time.Now()
@@ -37,7 +27,6 @@ func SeedData() {
 			ImagePath:        "uploads/plants/monstera1.jpg",
 			WateringInterval: 7,
 			LastTimeWatering: now.AddDate(0, 0, -8), // Needs watering
-			UserID:           user.ID,
 			SpeciesID:        1,
 		},
 		{
@@ -45,7 +34,6 @@ func SeedData() {
 			ImagePath:        "uploads/plants/snake1.jpg",
 			WateringInterval: 14,
 			LastTimeWatering: now.AddDate(0, 0, -10), // Needs watering
-			UserID:           user.ID,
 			SpeciesID:        2,
 		},
 		{
@@ -53,7 +41,6 @@ func SeedData() {
 			ImagePath:        "uploads/plants/peace1.jpg",
 			WateringInterval: 5,
 			LastTimeWatering: now.AddDate(0, 0, -3), // Recently watered
-			UserID:           user.ID,
 			SpeciesID:        3,
 		},
 		{
@@ -61,7 +48,6 @@ func SeedData() {
 			ImagePath:        "uploads/plants/fiddle1.jpg",
 			WateringInterval: 10,
 			LastTimeWatering: now.AddDate(0, 0, -5), // Needs watering soon
-			UserID:           user.ID,
 			SpeciesID:        4,
 		},
 		{
@@ -69,12 +55,11 @@ func SeedData() {
 			ImagePath:        "uploads/plants/zz1.jpg",
 			WateringInterval: 14,
 			LastTimeWatering: now.AddDate(0, 0, -7), // Recently watered
-			UserID:           user.ID,
 			SpeciesID:        5,
 		},
 	}
 
 	for _, p := range plants {
-		database.DB.FirstOrCreate(&p, models.Plant{Name: p.Name, UserID: user.ID})
+		DB.FirstOrCreate(&p, models.Plant{Name: p.Name})
 	}
 }

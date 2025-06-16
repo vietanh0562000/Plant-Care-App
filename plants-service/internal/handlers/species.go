@@ -1,9 +1,9 @@
-package controllers
+package handlers
 
 import (
 	"net/http"
-	"plant-care-app/database"
-	"plant-care-app/models"
+	"plant-care-app/plants-service/internal/database"
+	"plant-care-app/plants-service/internal/models"
 
 	"github.com/gin-gonic/gin"
 )

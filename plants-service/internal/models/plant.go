@@ -9,6 +9,5 @@ type Plant struct {
 	WateringInterval int       `gorm:"not null"`
 	LastTimeWatering time.Time `gorm:"type:timestamp"`
 	UserID           int       `gorm:"not null"`
-	User             User      `gorm:"foreignKey:UserID"`
 	SpeciesID        int       `gorm:"foreignKey:SpeciesID"`
 }

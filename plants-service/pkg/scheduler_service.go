@@ -2,8 +2,8 @@ package services
 
 import (
 	"log"
-	"plant-care-app/database"
-	"plant-care-app/models"
+	"plant-care-app/plants-service/internal/database"
+	"plant-care-app/plants-service/internal/models"
 
 	"github.com/robfig/cron"
 )
@@ -22,10 +22,6 @@ func (sch *Scheduler) CreateSchedulerAt(hour int) {
 			return
 		}
 
-		for i := 0; i < len(plants); i++ {
-			mailService := MailService{}
-			mailService.SendNewMail("aloalo", "vitanh562000@gmail.com")
-		}
 	})
 	sch.c.Start() // Start the scheduler
 }
