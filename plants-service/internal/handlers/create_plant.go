@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"plant-care-app/plants-service/config"
 	"plant-care-app/plants-service/internal/database"
 	"plant-care-app/plants-service/internal/models"
 	"strconv"
@@ -17,9 +18,11 @@ type PlantInput struct {
 	Name             string `form:"Name" binding:"required"`
 	WateringInterval string `form:"WateringInterval" binding:"required"`
 	SpeciesID        string `form:"SpeciesID" binding:"required"`
+	UserID           int    `form:"UserID" binding:"required"`
 }
 
 func CreatePlant(c *gin.Context) {
+	cfg := config.GetInstance()
 	var plantInput PlantInput
 
 	// Debug: Print all form data
@@ -47,7 +50,8 @@ func CreatePlant(c *gin.Context) {
 	}
 
 	// get container folder
-	uploadDir := os.Getenv("UPLOAD_PLANT_DIR")
+	uploadDir := cfg.GetUploadDir()
+	fmt.Println(uploadDir)
 	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error create upload directory " + err.Error()})
 		return
@@ -82,12 +86,20 @@ func CreatePlant(c *gin.Context) {
 		return
 	}
 
+	var request = fmt.Sprintf("%s/user:%v", cfg.GetUserServiceHost(), plantInput.UserID)
+	response, err := http.Get(request)
+	if err != nil || response.StatusCode == http.StatusOK {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	// Create the plant
 	newPlant := models.Plant{
 		Name:             plantInput.Name,
 		ImagePath:        fullPath,
 		WateringInterval: wateringInterval,
 		SpeciesID:        speciesID,
+		UserID:           plantInput.UserID,
 	}
 
 	result := database.DB.Create(&newPlant)

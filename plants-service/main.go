@@ -5,6 +5,7 @@ import (
 	"plant-care-app/plants-service/config"
 	"plant-care-app/plants-service/internal/database"
 	"plant-care-app/plants-service/internal/routes"
+	services "plant-care-app/plants-service/pkg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +13,12 @@ import (
 func main() {
 	cfg := config.GetInstance()
 	database.Connect()
+	database.SeedData()
 	router := gin.Default()
 	routes.SetupRoutes(router)
+
+	var scheduler = services.Scheduler{}
+	scheduler.CreateSchedulerAt(1)
 
 	address := fmt.Sprintf(":%s", cfg.GetAppPort())
 	router.Run(address)

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"log"
 	"plant-care-app/plants-service/internal/database"
 	"plant-care-app/plants-service/internal/models"
@@ -21,6 +22,8 @@ func (sch *Scheduler) CreateSchedulerAt(hour int) {
 			log.Printf("Database error: %v\n", result.Error)
 			return
 		}
+
+		fmt.Println("Get successfully")
 
 	})
 	sch.c.Start() // Start the scheduler

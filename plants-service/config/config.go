@@ -23,7 +23,7 @@ func GetInstance() *Config {
 	once.Do(func() {
 		fmt.Println("Initializing Config...")
 		godotenv.Load("./config/.env")
-		instance = &Config{Name: "MyApp"}
+		instance = &Config{Name: "PlantService"}
 	})
 	return instance
 }
@@ -65,4 +65,13 @@ func (cfg *Config) GetDBUser() string {
 
 func (cfg *Config) GetDBPassword() string {
 	return os.Getenv("DB_PASSWORD")
+}
+
+func (cfg *Config) GetUserServiceHost() string {
+	return os.Getenv("USER_SERVICE")
+}
+
+func (cgf *Config) GetUploadDir() string {
+	fmt.Println("GET UPLOAD DIR----------")
+	return os.Getenv("UPLOAD_PLANT_DIR")
 }
