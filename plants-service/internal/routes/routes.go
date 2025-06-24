@@ -2,13 +2,14 @@ package routes
 
 import (
 	"plant-care-app/plants-service/internal/handlers"
+	"plant-care-app/plants-service/internal/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes(r *gin.Engine) {
 
-	r.POST("/plants", handlers.CreatePlant)
+	r.POST("/plants", middlewares.AuthMiddleware(), handlers.CreatePlant)
 	r.GET("/plants", handlers.GetPlants)
 	r.GET("/plants/need-watering", handlers.GetPlantsNeedWatering)
 

@@ -18,7 +18,6 @@ type PlantInput struct {
 	Name             string `form:"Name" binding:"required"`
 	WateringInterval string `form:"WateringInterval" binding:"required"`
 	SpeciesID        string `form:"SpeciesID" binding:"required"`
-	UserID           int    `form:"UserID" binding:"required"`
 }
 
 func CreatePlant(c *gin.Context) {
@@ -86,7 +85,14 @@ func CreatePlant(c *gin.Context) {
 		return
 	}
 
-	var request = fmt.Sprintf("%s/user:%v", cfg.GetUserServiceHost(), plantInput.UserID)
+	userIDStr, _ := c.Get("user_id")
+	userId, err := strconv.Atoi(fmt.Sprintf("%v", userIDStr))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	var request = fmt.Sprintf("%s/user:%v", cfg.GetUserServiceHost(), userId)
 	response, err := http.Get(request)
 	if err != nil || response.StatusCode == http.StatusOK {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -99,7 +105,7 @@ func CreatePlant(c *gin.Context) {
 		ImagePath:        fullPath,
 		WateringInterval: wateringInterval,
 		SpeciesID:        speciesID,
-		UserID:           plantInput.UserID,
+		UserID:           userId,
 	}
 
 	result := database.DB.Create(&newPlant)

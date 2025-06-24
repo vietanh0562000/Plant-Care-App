@@ -75,3 +75,7 @@ func (cgf *Config) GetUploadDir() string {
 	fmt.Println("GET UPLOAD DIR----------")
 	return os.Getenv("UPLOAD_PLANT_DIR")
 }
+
+func (cfg *Config) GetJWTSercretKey() string {
+	return os.Getenv("JWT_SECRET")
+}
