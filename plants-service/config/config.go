@@ -79,3 +79,7 @@ func (cgf *Config) GetUploadDir() string {
 func (cfg *Config) GetJWTSercretKey() string {
 	return os.Getenv("JWT_SECRET")
 }
+
+func (cfg *Config) GetNotificationServiceHost() string {
+	return os.Getenv("NOTIFICATION_SERVICE")
+}

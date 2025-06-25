@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"plant-care-app/plants-service/config"
 	"plant-care-app/plants-service/internal/database"
+	"plant-care-app/plants-service/internal/handlers"
 	"plant-care-app/plants-service/internal/routes"
 	services "plant-care-app/plants-service/pkg"
 
@@ -18,7 +19,7 @@ func main() {
 	routes.SetupRoutes(router)
 
 	var scheduler = services.Scheduler{}
-	scheduler.CreateSchedulerAt(1)
+	scheduler.CreateSchedulerAt(1, handlers.SendMailWatering)
 
 	address := fmt.Sprintf(":%s", cfg.GetAppPort())
 	router.Run(address)

@@ -94,6 +94,12 @@ func CreatePlant(c *gin.Context) {
 
 	var request = fmt.Sprintf("%s/user:%v", cfg.GetUserServiceHost(), userId)
 	response, err := http.Get(request)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": err.Error()})
+		return
+	}
+
+	defer response.Body.Close()
 	if err != nil || response.StatusCode == http.StatusOK {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
