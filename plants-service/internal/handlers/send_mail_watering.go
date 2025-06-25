@@ -42,6 +42,8 @@ func SendMailWatering() {
 		content := "Let's water your plant"
 		SendRequestEmailInternal(userEmail, content, cfg)
 	}
+
+	fmt.Println("---------------------------------SE")
 }
 
 func SendRequestEmailInternal(destination, content string, cfg *config.Config) {
