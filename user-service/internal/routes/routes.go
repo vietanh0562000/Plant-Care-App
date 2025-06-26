@@ -12,4 +12,5 @@ func SetupRoutes(r *gin.Engine) {
 	r.POST("/login", handlers.Login)
 	r.GET("/user:userID", handlers.GetUser)
 	r.GET("/user_email/:id", handlers.GetUserEmail)
+	r.GET("/users/:id/firebaseToken", handlers.GetFireBaseToken)
 }

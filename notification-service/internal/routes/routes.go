@@ -8,4 +8,5 @@ import (
 
 func SetupRoutes(router *gin.Engine) {
 	router.POST("/send_email", controllers.SendEmail)
+	router.POST("/send_device_notification", controllers.SendDeviceNotification)
 }

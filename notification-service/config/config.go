@@ -51,3 +51,7 @@ func (c *Config) GetSMTPUser() string {
 func (c *Config) GetSMTPPassword() string {
 	return os.Getenv("SMTP_PASSWORD")
 }
+
+func (c *Config) GetGGAppCredentailsPath() string {
+	return os.Getenv("GG_APP_CREDENTAILS")
+}

@@ -19,7 +19,8 @@ func main() {
 	routes.SetupRoutes(router)
 
 	var scheduler = services.Scheduler{}
-	scheduler.CreateSchedulerAt(2, handlers.SendMailWatering)
+	runRule := fmt.Sprintf("0 */1 * * * *")
+	scheduler.CreateSchedulerAt(runRule, handlers.SendWateringNotification)
 
 	address := fmt.Sprintf(":%s", cfg.GetAppPort())
 	router.Run(address)
