@@ -30,3 +30,6 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+# Firebase config files
+**/firebase-adminsdk-*.json
+notification-service/config/plantcareapp-firebase-adminsdk-fbsvc-d5dc183ab5.json
